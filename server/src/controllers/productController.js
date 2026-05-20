@@ -20,12 +20,28 @@ export const createProduct = async (req, res) => {
     });
   } catch (error) {
     console.error("Error creating product: ", error);
-    res
-      .status(500)
-      .json({
-        status: "Error creating product",
-        message: "Server error",
-        error: error.message,
-      });
+    res.status(500).json({
+      status: "Error creating product",
+      message: "Server error",
+      error: error.message,
+    });
+  }
+};
+
+export const getAllProduct = async (req, res) => {
+  try {
+    const products = await Product.find();
+    res.status(200).json({
+      status: "success ",
+      message: "Fetched all products successfully",
+      products,
+    });
+  } catch (error) {
+    console.error("Error fetching all products:", error);
+    res.status(500).json({
+      status: "Error ",
+      message: "Server error",
+      error: error.message,
+    });
   }
 };
