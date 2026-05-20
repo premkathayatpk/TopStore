@@ -3,17 +3,29 @@ import Product from "../models/productModel.js";
 
 export const createProduct = async (req, res) => {
   try {
-    const { name, price, description, productImg, category, stock } = req.body;
-  } catch (error) {
-    res.status(500).json({ message: "Server error" });
-  }
-};
+    const { name, price, description, category, stock } = req.body;
 
-export const getProducts = async (req, res) => {
-  try {
-    const products = await Product.find();
-    res.status(200).json(products);
+    const savedProduct = await Product.create({
+      name,
+      price,
+      description,
+      category,
+      stock,
+    });
+
+    res.status(201).json({
+      status: "Success",
+      Message: "Product created successfully",
+      savedProduct,
+    });
   } catch (error) {
-    res.status(500).json({ message: "Server error" });
+    console.error("Error creating product: ", error);
+    res
+      .status(500)
+      .json({
+        status: "Error creating product",
+        message: "Server error",
+        error: error.message,
+      });
   }
 };

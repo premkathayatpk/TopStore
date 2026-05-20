@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import { configDotenv } from "dotenv";
 import connect from "./src/connectDb/connect.js";
+import { productRouter } from "./src/routers/productRouter.js";
 
 const dotenv = configDotenv();
 
@@ -11,9 +12,8 @@ app.use(express.json());
 
 connect();
 
-app.get("/", (req, res) => {
-  res.send("Welcome to the TopStore API!");
-});
+//API
+app.use("/api/product", productRouter);
 
 const PORT = process.env.PORT || 5000;
 
