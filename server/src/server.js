@@ -1,8 +1,8 @@
 import express from "express";
 import cors from "cors";
 import { configDotenv } from "dotenv";
-import connect from "./src/connectDb/connect.js";
-import { productRouter } from "./src/routers/productRouter.js";
+import connect from "./config/db.js";
+import { productRouter } from "./routers/productRouter.js";
 
 const dotenv = configDotenv();
 
@@ -18,5 +18,9 @@ app.use("/api/product", productRouter);
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-  console.log(`Server is running on port http://localhost:${PORT}`);
+  try {
+    console.log(`Server is running on port http://localhost:${PORT}`);
+  } catch (error) {
+    console.error("Error starting server: ", error);
+  }
 });

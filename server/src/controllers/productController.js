@@ -6,12 +6,22 @@ export const createProduct = async (req, res) => {
   try {
     const { name, price, description, category, stock } = req.body;
 
+    if (!req.file) {
+      return res.status(400).json({
+        status: "fail",
+        message: "Please upload an image using the field name 'productImg'",
+      });
+    }
+
+    const imagePath = `/uploads/products/${req.file.filename}`;
+
     const savedProduct = await Product.create({
       name,
       price,
       description,
       category,
       stock,
+      productImg: imagePath,
     });
 
     res.status(201).json({
