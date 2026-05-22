@@ -3,6 +3,7 @@ import cors from "cors";
 import { configDotenv } from "dotenv";
 import connect from "./config/db.js";
 import { productRouter } from "./routers/productRouter.js";
+import userRouter from "./routers/userRouter.js";
 
 const dotenv = configDotenv();
 
@@ -14,6 +15,7 @@ connect();
 
 //API
 app.use("/api/product", productRouter);
+app.use("/api/user", userRouter);
 
 const PORT = process.env.PORT || 5000;
 
