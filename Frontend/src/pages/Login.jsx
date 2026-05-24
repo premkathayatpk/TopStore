@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { user } from "../data/user.js";
 import { IoIosLogIn } from "react-icons/io";
-import { CiMail } from "react-icons/ci";
-import { CiLock } from "react-icons/ci";
+import { CiMail, CiLock } from "react-icons/ci";
+import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5"; 
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
   const [initialData] = useState({
     email: "",
     password: "",
@@ -16,7 +17,6 @@ const Login = () => {
 
   const handleFormData = (e) => {
     const { name, value } = e.target;
-
     setFormData((prev) => ({
       ...prev,
       [name]: value,
@@ -26,8 +26,7 @@ const Login = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const matchUser = user.find(
-      (user) =>
-        user.email === formData.email && user.password === formData.password,
+      (u) => u.email === formData.email && u.password === formData.password,
     );
 
     if (matchUser) {
@@ -40,58 +39,104 @@ const Login = () => {
       alert("Invalid Email or Password");
     }
   };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-orange-100  ">
+    <div className="min-h-screen flex items-center justify-center bg-orange-100 px-4">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden border border-orange-100">
-        <div className="bg-orange-500 py-5 text-center ">
-          <h1 className="text-3xl font-extrabold text-white flex items-center justify-center gap-2 ">
-            <IoIosLogIn size={28} />
+        {/* Branding Header Banner */}
+        <div className="bg-orange-500 py-6 text-center">
+          <h1 className="text-3xl font-extrabold text-white flex items-center justify-center gap-2 tracking-wide">
+            <IoIosLogIn size={32} />
             TopStore
           </h1>
-          <p className="text-orange-100 mt-2">
+          <p className="text-orange-100 text-sm mt-2 font-medium px-4">
             Welcome back! Please login to your account
           </p>
         </div>
-        <form onSubmit={handleSubmit} className=" p-8    space-y-6 ">
+
+        {/* Form Container */}
+        <form onSubmit={handleSubmit} className="p-8 space-y-5">
+          {/* Email Form Field */}
           <div className="flex flex-col w-full">
             <label
-              className="text-sm font-semibold text-gray-700 ml-1"
+              className="text-xs font-bold uppercase tracking-wider text-gray-600 mb-1.5 ml-1"
               htmlFor="email"
             >
-              Email
+              Email Address
             </label>
-            <input
-              type="text"
-              placeholder="Enter your Email Address"
-              name="email"
-              value={formData.email}
-              onChange={handleFormData}
-              className="border-2 w-full py-1 px-4 text-xl rounded-md hover:border-blue-700"
-            />
+            <div className="relative flex items-center">
+              <span className="absolute left-3 text-gray-400">
+                <CiMail size={22} />
+              </span>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="name@example.com"
+                value={formData.email}
+                onChange={handleFormData}
+                className="border-2 border-gray-200 w-full py-2.5 pl-10 pr-4 text-base rounded-xl transition-all duration-200 hover:border-orange-400 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
+                required
+              />
+            </div>
           </div>
+
+          {/* Password Form Field */}
           <div className="flex flex-col w-full">
             <label
-              className="text-sm font-semibold text-gray-700 ml-1"
+              className="text-xs font-bold uppercase tracking-wider text-gray-600 mb-1.5 ml-1"
               htmlFor="password"
             >
               Password
             </label>
-            <input
-              type="password"
-              placeholder="Enter your Password"
-              name="password"
-              value={formData.password}
-              onChange={handleFormData}
-              className="border-2 w-full py-1 px-4 text-xl rounded-md hover:border-blue-700"
-            />
+            <div className="relative flex items-center">
+              <span className="absolute left-3 text-gray-400">
+                <CiLock size={22} />
+              </span>
+              <input
+                type={showPassword ? "text" : "password"}
+                id="password"
+                name="password"
+                placeholder="••••••••"
+                value={formData.password}
+                onChange={handleFormData}
+                className="border-2 border-gray-200 w-full py-2.5 pl-10 pr-10 text-base rounded-xl transition-all duration-200 hover:border-orange-400 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
+                required
+              />
+              {/* Show/Hide Password Toggle Action button */}
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 text-gray-400 hover:text-gray-600 cursor-pointer focus:outline-none"
+                title={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? (
+                  <IoEyeOffOutline size={20} />
+                ) : (
+                  <IoEyeOutline size={20} />
+                )}
+              </button>
+            </div>
           </div>
 
+          {/* Action Login Trigger */}
           <button
             type="submit"
-            className="bg-green-600 text-white text-xl font-bold py-2 w-full rounded-xl cursor-pointer hover:bg-green-500"
+            className="bg-green-600 text-white text-lg font-bold py-3 w-full rounded-xl cursor-pointer hover:bg-green-500 shadow-md hover:shadow-lg transition-all duration-200 active:scale-[0.99] mt-2"
           >
-            Login
+            Sign In
           </button>
+
+          {/* Navigation Route Alternative */}
+          <p className="text-sm text-center text-gray-500 pt-2">
+            Don't have an account yet?{" "}
+            <span
+              onClick={() => navigate("/register")}
+              className="text-orange-600 font-bold cursor-pointer hover:underline hover:text-orange-500 transition-colors"
+            >
+              Register here
+            </span>
+          </p>
         </form>
       </div>
     </div>

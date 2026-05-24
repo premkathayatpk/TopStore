@@ -1,106 +1,192 @@
 import React, { useState } from "react";
+import { IoIosPersonAdd } from "react-icons/io";
+import { useNavigate } from "react-router-dom";
 
 const Register = () => {
+  const navigate = useNavigate();
   const [initialData] = useState({
-    fullName: "",
+    name: "",
     email: "",
     password: "",
     phone: "",
-    profile: null,
     address: "",
+    profileImg: null,
   });
 
   const [formData, setFormData] = useState(initialData);
 
   const handleFormData = (e) => {
-    const { name, value, files } = e.target;
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
 
-    if (name === "profile") {
-      setFormData((prev) => ({
-        ...prev,
-        profile: files[0],
-      }));
-    } else {
-      setFormData((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
-    }
+  const handleFileChange = (e) => {
+    setFormData((prev) => ({
+      ...prev,
+      profileImg: e.target.files[0],
+    }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(formData);
 
-    setFormData(initialData);
+    console.log("Form submitted data:", formData);
+
+    alert("Registration submission caught!");
   };
+
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <fieldset>
-          <legend>Register</legend>
-          <div>
-            <label htmlFor="profile">Profile Picture</label>
-            <input
-              type="file"
-              name="profile"
-              placeholder="Choose Profile Picture"
-              onChange={handleFormData}
-            />
-          </div>
-          <div>
-            <label htmlFor="fullName">Full Name</label>
-            <input
-              type="text"
-              name="fullName"
-              placeholder="Enter your Full Name"
-              value={formData.fullName}
-              onChange={handleFormData}
-            />
-          </div>
-          <div>
-            <label htmlFor="email">Email</label>
+    <div className="min-h-screen flex items-center justify-center bg-orange-100 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden border border-orange-100">
+        {/* Header Block Matching Login */}
+        <div className="bg-orange-500 py-5 text-center">
+          <h1 className="text-3xl font-extrabold text-white flex items-center justify-center gap-2">
+            <IoIosPersonAdd size={28} />
+            TopStore
+          </h1>
+          <p className="text-orange-100 mt-2">
+            Create an account to get started
+          </p>
+        </div>
+
+        {/* Form Container */}
+        <form onSubmit={handleSubmit} className="p-8 space-y-5">
+          {/* Full Name Input */}
+          <div className="flex flex-col w-full">
+            <label
+              className="text-sm font-semibold text-gray-700 ml-1"
+              htmlFor="name"
+            >
+              Full Name
+            </label>
             <input
               type="text"
-              placeholder="Enter your Email Address"
+              id="name"
+              name="name"
+              placeholder="Enter your full name"
+              value={formData.name}
+              onChange={handleFormData}
+              className="border-2 w-full py-1 px-4 text-xl rounded-md hover:border-blue-700 focus:outline-none focus:border-blue-700"
+            />
+          </div>
+
+          {/* Email Input */}
+          <div className="flex flex-col w-full">
+            <label
+              className="text-sm font-semibold text-gray-700 ml-1"
+              htmlFor="email"
+            >
+              Email
+            </label>
+            <input
+              type="email"
+              id="email"
               name="email"
+              placeholder="Enter your Email Address"
               value={formData.email}
               onChange={handleFormData}
+              className="border-2 w-full py-1 px-4 text-xl rounded-md hover:border-blue-700 focus:outline-none focus:border-blue-700"
             />
           </div>
-          <div>
-            <label htmlFor="password">Password</label>
+
+          {/* Password Input */}
+          <div className="flex flex-col w-full">
+            <label
+              className="text-sm font-semibold text-gray-700 ml-1"
+              htmlFor="password"
+            >
+              Password
+            </label>
             <input
               type="password"
-              placeholder="Enter your Password"
+              id="password"
               name="password"
+              placeholder="Create a strong password"
               value={formData.password}
               onChange={handleFormData}
+              className="border-2 w-full py-1 px-4 text-xl rounded-md hover:border-blue-700 focus:outline-none focus:border-blue-700"
             />
           </div>
-          <div>
-            <label htmlFor="phone">Phone</label>
+
+          {/* Phone Input */}
+          <div className="flex flex-col w-full">
+            <label
+              className="text-sm font-semibold text-gray-700 ml-1"
+              htmlFor="phone"
+            >
+              Phone Number
+            </label>
             <input
-              type="text"
-              placeholder="Enter your Phone Number"
+              type="tel"
+              id="phone"
               name="phone"
+              placeholder="Enter your mobile number"
               value={formData.phone}
               onChange={handleFormData}
+              className="border-2 w-full py-1 px-4 text-xl rounded-md hover:border-blue-700 focus:outline-none focus:border-blue-700"
             />
           </div>
-          <div>
-            <label htmlFor="Address">Address</label>
+
+          {/* Address Input */}
+          <div className="flex flex-col w-full">
+            <label
+              className="text-sm font-semibold text-gray-700 ml-1"
+              htmlFor="address"
+            >
+              Address
+            </label>
             <input
               type="text"
-              placeholder="Enter your Address"
+              id="address"
               name="address"
+              placeholder="Enter your street address"
               value={formData.address}
               onChange={handleFormData}
+              className="border-2 w-full py-1 px-4 text-xl rounded-md hover:border-blue-700 focus:outline-none focus:border-blue-700"
             />
           </div>
-        </fieldset>
-        <button type="submit">Submit</button>
-      </form>
+
+          {/* Profile Image File Upload */}
+          <div className="flex flex-col w-full">
+            <label
+              className="text-sm font-semibold text-gray-700 ml-1"
+              htmlFor="profileImg"
+            >
+              Profile Image
+            </label>
+            <input
+              type="file"
+              id="profileImg"
+              name="profileImg"
+              accept="image/*"
+              onChange={handleFileChange}
+              className="border-2 w-full py-1 px-2 text-base rounded-md hover:border-blue-700 file:mr-4 file:py-1 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100 cursor-pointer"
+            />
+          </div>
+
+          {/* Submit Action Button */}
+          <button
+            type="submit"
+            className="bg-green-600 text-white text-xl font-bold py-2 w-full rounded-xl cursor-pointer hover:bg-green-500 mt-2 transition-colors duration-200"
+          >
+            Register
+          </button>
+
+          {/* Navigation Helper Link */}
+          <p className="text-sm text-center text-gray-600 mt-2">
+            Already have an account?{" "}
+            <span
+              onClick={() => navigate("/login")}
+              className="text-orange-600 font-semibold cursor-pointer hover:underline"
+            >
+              Login here
+            </span>
+          </p>
+        </form>
+      </div>
     </div>
   );
 };

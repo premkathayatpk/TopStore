@@ -2,7 +2,7 @@ import React from "react";
 import Navbar from "../components/Navbar";
 import { Outlet } from "react-router-dom";
 import Footer from "../components/Footer";
-import AppRouter from "../routers/AppRouter";
+import AppRouter from "../routes/AppRoute";
 
 const MainLayout = () => {
   return (
