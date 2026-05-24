@@ -4,6 +4,8 @@ import {
   deleteUser,
   getAllUsers,
   getUser,
+  loginUser,
+  logoutUser,
   updateUser,
 } from "../controllers/userController.js";
 import { uploadAvatar } from "../middlewares/uploadFile.js";
@@ -11,6 +13,8 @@ import { uploadAvatar } from "../middlewares/uploadFile.js";
 const userRouter = express.Router();
 
 userRouter.post("/register", uploadAvatar.single("profileImg"), createUser);
+userRouter.post("/login", loginUser);
+userRouter.post("/logout", logoutUser);
 
 userRouter.get("/getUser/:id", getUser);
 

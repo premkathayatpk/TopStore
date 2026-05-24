@@ -4,12 +4,18 @@ import { configDotenv } from "dotenv";
 import connect from "./config/db.js";
 import { productRouter } from "./routers/productRouter.js";
 import userRouter from "./routers/userRouter.js";
+import cookieParser from "cookie-parser";
 
 const dotenv = configDotenv();
 
 const app = express();
+
+//setting
 app.use(cors());
 app.use(express.json());
+
+//cookie parser
+app.use(cookieParser());
 
 connect();
 

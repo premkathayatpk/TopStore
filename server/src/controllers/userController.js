@@ -4,6 +4,9 @@ import mongoose from "mongoose";
 import fs from "fs";
 import path from "path";
 import bcrypt from "bcryptjs";
+import generateToken from "../utils/generateToken.js";
+
+//============= CREATE USER =====================
 
 export const createUser = async (req, res) => {
   try {
@@ -17,8 +20,16 @@ export const createUser = async (req, res) => {
       });
     }
 
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+    const existingUser = await User.findOne({ email });
+
+    if (existingUser) {
+      return res.status(400).json({
+        status: "fail",
+        message: "Email already exists",
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     const imagePath = `/uploads/avatars/${req.file.filename}`;
 
@@ -32,6 +43,17 @@ export const createUser = async (req, res) => {
       role,
     });
 
+    const token = generateToken(createdUser._id);
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "strict",
+      maxAge: 24 * 60 * 60 * 1000,
+    });
+
+    createdUser.password = undefined;
+
     res.status(201).json({
       status: "Success",
       message: "User Register successfully",
@@ -39,6 +61,16 @@ export const createUser = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
+
+    if (error.name === "ValidationError") {
+      const messages = Object.values(error.errors).map((err) => err.message);
+      return res.status(400).json({
+        status: "fail",
+        message: "Validation error",
+        errors: messages[0],
+      });
+    }
+
     res.status(500).json({
       status: "Error",
       message: "Server error",
@@ -46,6 +78,8 @@ export const createUser = async (req, res) => {
     });
   }
 };
+
+//============= GET USER =====================
 
 export const getUser = async (req, res) => {
   try {
@@ -58,14 +92,15 @@ export const getUser = async (req, res) => {
         .status(404)
         .json({ status: "error", message: "No User found with that ID" });
     }
+
     res.status(200).json({
       status: "success",
       message: "User fetched successfully",
       user,
     });
   } catch (error) {
-    if (req.file) fs.unlinkSync(req.file.path);
     console.error(error);
+
     res.status(500).json({
       status: "error",
       message: "Server error",
@@ -73,6 +108,8 @@ export const getUser = async (req, res) => {
     });
   }
 };
+
+// ============= GET ALL USERS ==================
 
 export const getAllUsers = async (req, res) => {
   try {
@@ -91,6 +128,7 @@ export const getAllUsers = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
+
     res.status(500).json({
       status: "error",
       message: "Server error",
@@ -98,6 +136,8 @@ export const getAllUsers = async (req, res) => {
     });
   }
 };
+
+// ============= DELETE USER ==================
 
 export const deleteUser = async (req, res) => {
   try {
@@ -118,6 +158,8 @@ export const deleteUser = async (req, res) => {
         fs.unlinkSync(absoluteImagePath);
       }
     }
+    deletedUser.password = undefined;
+
     res.status(200).json({
       status: "success",
       message: "User deleted successfully",
@@ -133,6 +175,8 @@ export const deleteUser = async (req, res) => {
   }
 };
 
+// ============= UPDATE USER ==================
+
 export const updateUser = async (req, res) => {
   try {
     const { id } = req.params;
@@ -147,43 +191,39 @@ export const updateUser = async (req, res) => {
         .json({ status: "error", message: "No User found with that ID" });
     }
 
-    let finalPassword = user.password;
-
     if (password && password.trim() !== "") {
-      const salt = await bcrypt.genSalt(10);
-      finalPassword = await bcrypt.hash(password, salt);
+      if (password.length < 6) {
+        if (req.file) fs.unlinkSync(req.file.path);
+        return res.status(400).json({
+          status: "fail",
+          message: "Password must be at least 6 characters",
+        });
+      }
+      user.password = await bcrypt.hash(password, 10);
     }
 
-    let imagePath = user.profileImg;
-
     if (req.file) {
-      imagePath = `/uploads/avatars/${req.file.filename}`;
+      const oldImagePath = user.profileImg;
 
-      if (user.profileImg) {
-        const oldImagePath = path.resolve(`public${user.profileImg}`);
+      user.profileImg = `/uploads/avatars/${req.file.filename}`;
 
-        if (fs.existsSync(oldImagePath)) {
-          fs.unlinkSync(oldImagePath);
+      if (oldImagePath) {
+        const absoluteOldPath = path.resolve(`public${oldImagePath}`);
+        if (fs.existsSync(absoluteOldPath)) {
+          fs.unlinkSync(absoluteOldPath);
         }
       }
     }
 
-    const updatedUser = await User.findByIdAndUpdate(
-      id,
-      {
-        name,
-        email,
-        password: finalPassword,
-        phone,
-        profileImg: imagePath,
-        address,
-        role,
-      },
-      {
-        new: true,
-        runValidators: true,
-      },
-    );
+    if (name) user.name = name;
+    if (email) user.email = email;
+    if (phone) user.phone = phone;
+    if (address) user.address = address;
+    if (role) user.role = role;
+
+    const updatedUser = await user.save();
+
+    updatedUser.password = undefined;
 
     res.status(200).json({
       status: "success",
@@ -194,6 +234,15 @@ export const updateUser = async (req, res) => {
     if (req.file) fs.unlinkSync(req.file.path);
 
     console.error(error);
+
+    if (error.name === "ValidationError") {
+      const messages = Object.values(error.errors).map((err) => err.message);
+      return res.status(400).json({
+        status: "fail",
+        message: messages[0],
+      });
+    }
+
     res.status(500).json({
       status: "error",
       message: "Server error",
@@ -202,12 +251,22 @@ export const updateUser = async (req, res) => {
   }
 };
 
+//Login ------------------------------
 
 export const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const user = await User.findOne({ email }).select("+password");
+    if (!email || !password) {
+      return res.status(400).json({
+        status: "error",
+        message: "Please provide both email and password",
+      });
+    }
+
+    const sanitizedEmail = email.trim().toLowerCase();
+
+    const user = await User.findOne({ email: sanitizedEmail });
 
     if (!user) {
       return res.status(401).json({
@@ -225,8 +284,13 @@ export const loginUser = async (req, res) => {
       });
     }
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: process.env.JWT_EXPIRES_IN,
+    const token = generateToken(user._id);
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "strict",
+      maxAge: 24 * 60 * 60 * 1000,
     });
 
     res.status(200).json({
@@ -242,6 +306,30 @@ export const loginUser = async (req, res) => {
         address: user.address,
         role: user.role,
       },
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      status: "error",
+      message: "Server error",
+      error: error.message,
+    });
+  }
+};
+
+//Logout -------------------------------------
+
+export const logoutUser = async (req, res) => {
+  try {
+    res.clearCookie("token", {
+      httpOnly: true,
+      secure: false,
+      sameSite: "strict",
+    });
+
+    res.status(200).json({
+      status: "success",
+      message: "Logout Successful",
     });
   } catch (error) {
     console.error(error);
