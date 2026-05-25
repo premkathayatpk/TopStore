@@ -7,7 +7,7 @@ export const user = [
     password: "prem1234",
     phone: 9827633522,
     address: "Kathmandu",
-    role: "User",
+    role: "user",
     profileImg: icone,
   },
   {
@@ -17,7 +17,7 @@ export const user = [
     password: "admin1234",
     phone: 9827633522,
     address: "Kathmandu",
-    role: "Admin",
+    role: "admin",
     profileImg: icone,
   },
 ];
