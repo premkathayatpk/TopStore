@@ -16,8 +16,10 @@ productRouter.post(
   uploadProduct.single("productImg"),
   createProduct,
 );
+
 productRouter.get("/getAll", getAllProduct);
 productRouter.get("/get/:id", getProduct);
+
 productRouter.put(
   "/update/:id",
   uploadProduct.single("productImg"),

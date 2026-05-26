@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useCart } from "../context/CartProvider";
+import { useCart } from "../../context/CartProvider";
 import { HiOutlineTrash } from "react-icons/hi"; //
 import { NavLink, useNavigate } from "react-router-dom";
 

@@ -1,5 +1,5 @@
-import hero from "../assets/hero.jpg";
-import { products } from "../data/products.js";
+import hero from "../../assets/hero.jpg";
+import { products } from "../../data/products.js";
 import Product from "./Product.jsx";
 
 const Home = () => {

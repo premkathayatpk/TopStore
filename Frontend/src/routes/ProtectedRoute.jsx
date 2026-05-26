@@ -8,10 +8,8 @@ const ProtectedRoute = () => {
   if (isLoading) {
     return <div>Loading....</div>;
   }
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
-  return <Outlet />;
+
+  return user ? <Outlet /> : <Navigate to="/login" />;
 };
 
 export default ProtectedRoute;

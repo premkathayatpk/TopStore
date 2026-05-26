@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { user } from "../data/user.js";
+import { user } from "../../data/user.js";
 import { IoIosLogIn } from "react-icons/io";
 import { CiMail, CiLock } from "react-icons/ci";
-import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5"; 
+import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
@@ -32,7 +32,11 @@ const Login = () => {
     if (matchUser) {
       localStorage.setItem("user", JSON.stringify(matchUser));
       alert("Login successful!");
-      navigate("/");
+      if (matchUser.role === "Admin") {
+        navigate("/admin");
+      } else {
+        navigate("/");
+      }
       setFormData(initialData);
       window.location.reload();
     } else {

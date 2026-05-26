@@ -1,5 +1,5 @@
 import React from "react";
-import { products } from "../data/products";
+import { products } from "../../data/products";
 import { useNavigate } from "react-router-dom";
 const Product = () => {
   const navigate = useNavigate();

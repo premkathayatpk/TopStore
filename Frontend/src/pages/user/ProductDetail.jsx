@@ -1,8 +1,8 @@
 import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { products } from "../data/products.js";
-import { useCart } from "../context/CartProvider.jsx";
-import { useAuth } from "../context/AuthProvider.jsx";
+import { products } from "../../data/products.js";
+import { useCart } from "../../context/CartProvider.jsx";
+import { useAuth } from "../../context/AuthProvider.jsx";
 
 const ProductDetail = () => {
   const { user } = useAuth();
