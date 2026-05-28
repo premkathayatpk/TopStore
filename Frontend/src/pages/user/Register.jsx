@@ -14,6 +14,7 @@ const Register = () => {
   });
 
   const [formData, setFormData] = useState(initialData);
+  const [error, setError] = useState({});
 
   const handleFormData = (e) => {
     const { name, value } = e.target;
@@ -21,6 +22,9 @@ const Register = () => {
       ...prev,
       [name]: value,
     }));
+    if (error[name]) {
+      setError((prev) => ({ ...prev, [name]: "" }));
+    }
   };
 
   const handleFileChange = (e) => {
@@ -30,12 +34,63 @@ const Register = () => {
     }));
   };
 
+  const validateForm = () => {
+    const localErrors = {};
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!formData.name.trim()) localErrors.name = "Full name is required";
+    if (!formData.email.trim()) {
+      localErrors.email = "Email address is required";
+    } else if (!emailRegex.test(formData.email)) {
+      localErrors.email = "Please enter a valid email address";
+    }
+    if (!formData.password) {
+      localErrors.password = "Password is required";
+    } else if (formData.password.length < 6) {
+      localErrors.password = "Password must be at least 6 characters long";
+    }
+    if (!formData.phone.trim()) localErrors.phone = "Phone number is required";
+    if (!formData.address.trim()) localErrors.address = "Address is required";
+
+    setErrors(localErrors);
+    return Object.keys(localErrors).length === 0;
+  };
+
+  const registerUser = async () => {
+    try {
+      const dataToSend = new FormData();
+      dataToSend.append("name", formData.name);
+      dataToSend.append("email", formData.email);
+      dataToSend.append("password", formData.password);
+      dataToSend.append("phone", formData.phone);
+      dataToSend.append("address", formData.address);
+
+      if (formData.profileImg) {
+        dataToSend.append("profileImg", formData.profileImg);
+      }
+
+      const res = await fetch("http://localhost:5000/api/user/register", {
+        method: "POST",
+        body: dataToSend,
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        alert(data.message || "Registration successful! Please login.");
+        navigate("/login");
+      } else {
+        alert(data.message || "Registration failed. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error registering user:", error);
+      alert("Unable to connect to the server. Please check your connection.");
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    console.log("Form submitted data:", formData);
-
-    alert("Registration submission caught!");
+    registerUser();
   };
 
   return (

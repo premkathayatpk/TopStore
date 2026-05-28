@@ -7,41 +7,40 @@ import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [initialData] = useState({
-    email: "",
-    password: "",
-  });
 
-  const [formData, setFormData] = useState(initialData);
+  const loginUser = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/api/user/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
 
-  const handleFormData = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+      const data = await res.json();
+
+      if (res.ok) {
+        alert("Login successful!");
+        navigate("/");
+      } else {
+        alert(
+          data.message ||
+            "Login failed. Please check your credentials and try again.",
+        );
+      }
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+      alert("Unable to connect to the server. Please check your connection.");
+    }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const matchUser = user.find(
-      (u) => u.email === formData.email && u.password === formData.password,
-    );
-
-    if (matchUser) {
-      localStorage.setItem("user", JSON.stringify(matchUser));
-      alert("Login successful!");
-      if (matchUser.role === "Admin") {
-        navigate("/admin");
-      } else {
-        navigate("/");
-      }
-      setFormData(initialData);
-      window.location.reload();
-    } else {
-      alert("Invalid Email or Password");
-    }
+    loginUser();
   };
 
   return (
@@ -77,8 +76,10 @@ const Login = () => {
                 id="email"
                 name="email"
                 placeholder="name@example.com"
-                value={formData.email}
-                onChange={handleFormData}
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                }}
                 className="border-2 border-gray-200 w-full py-2.5 pl-10 pr-4 text-base rounded-xl transition-all duration-200 hover:border-orange-400 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
                 required
               />
@@ -102,8 +103,10 @@ const Login = () => {
                 id="password"
                 name="password"
                 placeholder="••••••••"
-                value={formData.password}
-                onChange={handleFormData}
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                }}
                 className="border-2 border-gray-200 w-full py-2.5 pl-10 pr-10 text-base rounded-xl transition-all duration-200 hover:border-orange-400 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
                 required
               />

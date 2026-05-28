@@ -15,20 +15,20 @@ import Logout from "../pages/user/Logout";
 import Payment from "../pages/user/Payment";
 
 //Admin pages
-
 import AdminDashboard from "../pages/admin/AdminDashboard";
-import AdminUsers from "../pages/admin/AdminUsers";
-import AdminProducts from "../pages/admin/AdminProducts";
-import AdminOrders from "../pages/admin/AdminOrders";
-import AdminProfile from "../pages/admin/AdminProfile";
 
 //layouts
-import AdminLayout from "../layouts/AdminLayout";
 import MainLayout from "../layouts/MainLayout";
+import AdminLayout from "../layouts/AdminLayout";
 
 //protected routes
 import ProtectedRoute from "./ProtectedRoute";
 import AdminRoute from "./AdminRoute";
+import AdminLogin from "../pages/admin/AdminLogin";
+import AdminOrders from "../pages/admin/AdminOrders";
+import AdminUsers from "../pages/admin/AdminUsers";
+import AdminProducts from "../pages/admin/AdminProducts";
+import AdminProfile from "../pages/admin/AdminProfile";
 
 const AppRoute = () => {
   const router = createBrowserRouter([
@@ -102,16 +102,16 @@ const AppRoute = () => {
 
     {
       path: "admin/login",
-      element: <Login />,
+      element: <AdminLogin />,
     },
 
     //Admin routes
     {
-      path: "/admin",
-      element: <AdminRoute />,
+      path: "admin/",
+      element: <AdminLayout />,
       children: [
         {
-          element: <AdminLayout />,
+          element: <AdminRoute />,
           children: [
             {
               index: true,

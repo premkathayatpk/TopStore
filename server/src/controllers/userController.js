@@ -60,6 +60,7 @@ export const createUser = async (req, res) => {
       createdUser,
     });
   } catch (error) {
+    if (req.file) fs.unlinkSync(req.file.path);
     console.error(error);
 
     if (error.name === "ValidationError") {

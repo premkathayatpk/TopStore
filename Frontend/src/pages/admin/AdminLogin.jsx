@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import { user } from "../data/user.js";
+import { user } from "../../data/user.js";
 import { IoIosLogIn } from "react-icons/io";
 import { CiMail, CiLock } from "react-icons/ci";
 import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 
-const Login = () => {
+const AdminLogin = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [initialData] = useState({
@@ -26,7 +26,10 @@ const Login = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const matchUser = user.find(
-      (u) => u.email === formData.email && u.password === formData.password,
+      (u) =>
+        u.email === formData.email &&
+        u.password === formData.password &&
+        u.role === "admin",
     );
 
     if (matchUser) {
@@ -34,7 +37,7 @@ const Login = () => {
       alert("Login successful!");
       navigate("/admin");
       setFormData(initialData);
-      window.location.reload();
+      // window.location.reload();
     } else {
       alert("Invalid Email or Password");
     }
@@ -50,7 +53,7 @@ const Login = () => {
             TopStore
           </h1>
           <p className="text-orange-100 text-sm mt-2 font-medium px-4">
-            Welcome back! Please login to your account
+            Welcome back! Admin Please login to your account
           </p>
         </div>
 
@@ -143,4 +146,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default AdminLogin;

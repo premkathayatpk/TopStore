@@ -1,9 +1,7 @@
-import React from 'react'
+import React from "react";
 
 const AdminNavbar = () => {
-  return (
-    <div>AdminNavbar</div>
-  )
-}
+  return <div className="bg-gray-500 text-white p-4">AdminNavbar</div>;
+};
 
-export default AdminNavbar
+export default AdminNavbar;

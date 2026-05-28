@@ -7,6 +7,10 @@ export const AuthProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
 
+  const getUser=()=>{
+    
+  }
+
   useEffect(() => {
     try {
       const savedUser = localStorage.getItem("user");
