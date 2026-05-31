@@ -4,43 +4,27 @@ import { IoIosLogIn } from "react-icons/io";
 import { CiMail, CiLock } from "react-icons/ci";
 import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { AuthContext } from "../../context/AuthProvider.jsx";
 
 const Login = () => {
+  const { loginUser } = useContext(AuthContext);
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
-  const loginUser = async () => {
-    try {
-      const res = await fetch("http://localhost:5000/api/user/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
-
-      const data = await res.json();
-
-      if (res.ok) {
-        alert("Login successful!");
-        navigate("/");
-      } else {
-        alert(
-          data.message ||
-            "Login failed. Please check your credentials and try again.",
-        );
-      }
-    } catch (error) {
-      console.error("Error fetching user data:", error);
-      alert("Unable to connect to the server. Please check your connection.");
-    }
-  };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    loginUser();
+    if (!email || !password) {
+      alert("Please enter both email and password.");
+      return;
+    } else {
+      const isSuccess = await loginUser(email, password);
+      if (isSuccess) {
+        navigate("/");
+      }
+    }
   };
 
   return (

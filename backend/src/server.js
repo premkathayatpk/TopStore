@@ -13,7 +13,7 @@ const app = express();
 //setting
 app.use(
   cors({
-    origin: "http://localhost:5173" || "http://localhost:5174",
+    origin: ["http://localhost:5173", "http://localhost:5174"],
     credentials: true,
   }),
 );
@@ -26,6 +26,8 @@ app.use(cookieParser());
 connect();
 
 //API
+app.use("/uploads/avatars", express.static("public/uploads/avatars"));
+
 app.use("/api/product", productRouter);
 app.use("/api/user", userRouter);
 

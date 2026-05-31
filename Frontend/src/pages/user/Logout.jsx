@@ -1,14 +1,17 @@
 import React, { useEffect } from "react";
+import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../../context/AuthProvider";
 
 const Logout = () => {
+  const { logout } = useContext(AuthContext);
   const navigate = useNavigate();
+
   useEffect(() => {
-    localStorage.removeItem("user");
-    alert("Logout, Successfully");
+    logout();
+    alert("Logout successful!");
     navigate("/login");
-    window.location.reload();
-  }, [navigate]);
+  }, []);
   return <div></div>;
 };
 

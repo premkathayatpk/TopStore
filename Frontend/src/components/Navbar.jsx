@@ -8,11 +8,13 @@ import { TbClipboardList } from "react-icons/tb";
 import { MdOutlineShoppingCart } from "react-icons/md";
 
 import { useCart } from "../context/CartProvider";
-import { useAuth } from "../context/AuthProvider";
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthProvider";
 
 const Navbar = () => {
   const { cart } = useCart();
-  const { user } = useAuth();
+  const { user } = useContext(AuthContext);
+  console.log(user);
 
   const linkClass = ({ isActive }) =>
     `flex items-center gap-1 transition-all duration-300 px-3 py-1 rounded-md ${
@@ -57,9 +59,14 @@ const Navbar = () => {
 
         <div className="group relative py-2 flex">
           <div className="flex items-center gap-2 cursor-pointer p-1 rounded-full hover:bg-gray-100 transition-colors">
-            {user ? (
+            {user && user.profileImg ? (
               <div>
-                <img src={user?.profileImg} alt="profile" className="h-10" />
+                <img
+                  src={`http://localhost:5000/uploads/avatars/${user.profileImg}`}
+                  alt="profileImg"
+                  className="h-10 rounded-full
+                   object-cover"
+                />
               </div>
             ) : (
               <FaUserCircle size={35} className="text-gray-700" />

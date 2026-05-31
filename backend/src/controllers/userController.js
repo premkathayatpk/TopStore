@@ -31,14 +31,14 @@ export const createUser = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const imagePath = `/uploads/avatars/${req.file.filename}`;
+    const imageFilename = req.file.filename;
 
     const createdUser = await User.create({
       name,
       email,
       password: hashedPassword,
       phone,
-      profileImg: imagePath,
+      profileImg: imageFilename,
       address,
       role,
     });
@@ -84,15 +84,7 @@ export const createUser = async (req, res) => {
 
 export const getUser = async (req, res) => {
   try {
-    // const { id } = req.params;
-
-    // const user = await User.findById(id).select("-password");
     const user = req.user;
-    if (!user) {
-      return res
-        .status(404)
-        .json({ status: "error", message: "No User found with that ID" });
-    }
 
     res.status(200).json({
       status: "success",
@@ -298,15 +290,7 @@ export const loginUser = async (req, res) => {
       status: "success",
       message: "Login successful",
       token,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        phone: user.phone,
-        profileImg: user.profileImg,
-        address: user.address,
-        role: user.role,
-      },
+      user,
     });
   } catch (error) {
     console.error(error);

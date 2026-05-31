@@ -1,9 +1,10 @@
 import React from "react";
-import { useAuth } from "../context/AuthProvider";
+import { AuthContext } from "../context/AuthProvider";
 import { Navigate, Outlet } from "react-router-dom";
+import { useContext } from "react";
 
 const AdminRoute = () => {
-  const { user, loading } = useAuth();
+  const { user, loading } = useContext(AuthContext);
   // console.log(user);
 
   if (loading) {
