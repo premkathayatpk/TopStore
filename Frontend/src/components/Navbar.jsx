@@ -14,7 +14,6 @@ import { AuthContext } from "../context/AuthProvider";
 const Navbar = () => {
   const { cart } = useCart();
   const { user } = useContext(AuthContext);
-  console.log(user);
 
   const linkClass = ({ isActive }) =>
     `flex items-center gap-1 transition-all duration-300 px-3 py-1 rounded-md ${

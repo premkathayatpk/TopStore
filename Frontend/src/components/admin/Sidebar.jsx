@@ -10,6 +10,7 @@ const Sidebar = () => {
         <NavLink to="/admin/users">Users</NavLink>
         <NavLink to="/admin/products">Products</NavLink>
         <NavLink to="/admin/orders">Orders</NavLink>
+        <NavLink to="/admin/profile">Profile</NavLink>
       </nav>
     </div>
   );

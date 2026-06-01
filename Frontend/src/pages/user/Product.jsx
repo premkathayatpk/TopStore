@@ -3,6 +3,22 @@ import { products } from "../../data/products";
 import { useNavigate } from "react-router-dom";
 const Product = () => {
   const navigate = useNavigate();
+
+  const getProducts = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/api/product/getAll", {
+        method: "GET",
+        // headers: {
+        //   "Content-Type": "application",
+        // },
+      });
+
+      const data = await res.json();
+      console.log(data);
+    } catch (error) {}
+  };
+
+  getProducts();
   return (
     <>
       <div className="flex gap-10 justify-between flex-wrap py-15 px-20">

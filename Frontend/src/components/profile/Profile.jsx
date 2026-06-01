@@ -5,14 +5,6 @@ import { AuthContext } from "../../context/AuthProvider";
 const Profile = () => {
   const { user, isLoading, isError } = useContext(AuthContext);
   const navigate = useNavigate();
-  // const [userData, setUserData] = useState(null);
-
-  useEffect(() => {
-    const savedUser = localStorage.getItem("user");
-    if (savedUser) {
-      setUserData(JSON.parse(savedUser));
-    }
-  }, []);
 
   if (isLoading) {
     return (

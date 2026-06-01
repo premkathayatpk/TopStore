@@ -8,11 +8,10 @@ import { useContext } from "react";
 import { AuthContext } from "../../context/AuthProvider.jsx";
 
 const Login = () => {
-  const { loginUser } = useContext(AuthContext);
+  const { loginUser, user } = useContext(AuthContext);
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,8 +19,11 @@ const Login = () => {
       alert("Please enter both email and password.");
       return;
     } else {
-      const isSuccess = await loginUser(email, password);
-      if (isSuccess) {
+      const loggedUser = await loginUser(email, password);
+      if (loggedUser.role === "Admin") {
+        alert("Welcome Admin! Redirecting to admin dashboard...");
+        navigate("/admin");
+      } else {
         navigate("/");
       }
     }
@@ -83,7 +85,7 @@ const Login = () => {
                 <CiLock size={22} />
               </span>
               <input
-                type={showPassword ? "text" : "password"}
+                type="password"
                 id="password"
                 name="password"
                 placeholder="••••••••"
@@ -94,19 +96,6 @@ const Login = () => {
                 className="border-2 border-gray-200 w-full py-2.5 pl-10 pr-10 text-base rounded-xl transition-all duration-200 hover:border-orange-400 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
                 required
               />
-              {/* Show/Hide Password Toggle Action button */}
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 text-gray-400 hover:text-gray-600 cursor-pointer focus:outline-none"
-                title={showPassword ? "Hide password" : "Show password"}
-              >
-                {showPassword ? (
-                  <IoEyeOffOutline size={20} />
-                ) : (
-                  <IoEyeOutline size={20} />
-                )}
-              </button>
             </div>
           </div>
 

@@ -1,9 +1,12 @@
-import React from 'react'
+import React from "react";
+import AddProduct from "../../components/admin/product/AddProduct";
 
 const AdminProducts = () => {
   return (
-    <div>AdminProducts</div>
-  )
-}
+    <div>
+      <AddProduct />
+    </div>
+  );
+};
 
-export default AdminProducts
+export default AdminProducts;

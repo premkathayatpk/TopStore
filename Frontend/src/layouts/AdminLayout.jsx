@@ -7,10 +7,12 @@ const AdminLayout = () => {
   return (
     <div>
       <AdminNavbar />
-      <Sidebar />
-      <main>
-        <Outlet />
-      </main>
+      <div className="flex ">
+        <Sidebar />
+        <main>
+          <Outlet />
+        </main>
+      </div>
     </div>
   );
 };

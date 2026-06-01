@@ -1,21 +1,16 @@
 import React from "react";
-import { AuthContext } from "../context/AuthProvider";
-import { Navigate, Outlet } from "react-router-dom";
 import { useContext } from "react";
+import { Navigate, Outlet } from "react-router-dom";
+import { AuthContext } from "../context/AuthProvider";
 
 const AdminRoute = () => {
-  const { user, loading } = useContext(AuthContext);
-  // console.log(user);
+  const { user, isLoading } = useContext(AuthContext);
 
-  if (loading) {
-    return <div className="text-center p-5">Loading...</div>;
+  if (isLoading) {
+    return <div>Loading....</div>;
   }
 
-  return user && user.role === "admin" ? (
-    <Outlet />
-  ) : (
-    <Navigate to="/admin/login" />
-  );
+  return user && user.role === "Admin" ? <Outlet /> : <Navigate to="/login" />;
 };
 
 export default AdminRoute;

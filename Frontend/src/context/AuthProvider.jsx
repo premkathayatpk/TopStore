@@ -49,10 +49,9 @@ export const AuthProvider = ({ children }) => {
       const data = await res.json();
 
       if (res.ok) {
-        // await getUser();
+        await getUser();
         setUser(data.user);
-        alert("Login successful!");
-        return true;
+        return data.user;
       } else {
         alert(
           data.message ||
