@@ -25,3 +25,34 @@ export const getProductById = async (id) => {
     return null;
   }
 };
+
+export const deleteProduct = async (id) => {
+  try {
+    const res = await fetch(`${BASE_URL}/delete/${id}`, {
+      method: "DELETE",
+    });
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    console.error(`Error deleting product with id ${id}:`, error);
+    return null;
+  }
+};
+
+export const updateProduct = async (id) => {
+  try {
+    const res = await fetch(`${BASE_URL}/update/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(updatedData),
+    });
+
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    console.error(`Error updating product with id ${id}:`, error);
+    return null;
+  }
+};

@@ -1,9 +1,13 @@
 import { IoEyeOutline } from "react-icons/io5";
 import { FaEdit } from "react-icons/fa";
 import { MdDeleteForever } from "react-icons/md";
+import { useState } from "react";
+import ViewProduct from "./ViewProduct";
+import { deleteProduct } from "../../../api/productService";
 
 const ProductTable = ({ products }) => {
-  //   const { products } = products;
+  const [isOpen, setIsOpen] = useState(false);
+  const [product, setProduct] = useState(null);
   return (
     <div className="w-full bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
       <div className="overflow-x-auto">
@@ -91,7 +95,10 @@ const ProductTable = ({ products }) => {
                       <button
                         title="View Product"
                         className="p-2 text-slate-600 hover:text-slate-900 bg-slate-50 hover:bg-slate-100 rounded-lg transition-all border border-transparent hover:border-slate-200/50"
-                        onClick={() => {}}
+                        onClick={() => {
+                          setProduct(product);
+                          setIsOpen(true);
+                        }}
                       >
                         <IoEyeOutline size={16} />
                       </button>
@@ -109,7 +116,10 @@ const ProductTable = ({ products }) => {
                       <button
                         title="Delete Product"
                         className="p-2 text-rose-600 hover:text-rose-900 bg-rose-50 hover:bg-rose-100 rounded-lg transition-all border border-transparent hover:border-rose-200/50"
-                        onClick={() => {}}
+                        onClick={() => {
+                          deleteProduct(product._id);
+                          window.location.reload();
+                        }}
                       >
                         <MdDeleteForever size={16} />
                       </button>
@@ -138,6 +148,14 @@ const ProductTable = ({ products }) => {
           </tbody>
         </table>
       </div>
+      {isOpen && (
+        <ViewProduct
+          isClose={() => {
+            setIsOpen(false);
+          }}
+          product={product}
+        />
+      )}
     </div>
   );
 };
