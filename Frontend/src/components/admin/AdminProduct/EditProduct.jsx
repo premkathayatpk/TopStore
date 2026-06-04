@@ -1,16 +1,40 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-const AddProduct = ({ onClose }) => {
-  const [imagePreview, setImagePreview] = useState(null);
-  const [initialFormData, setInitialFormData] = useState({
-    name: "",
-    price: "",
-    stock: "",
-    category: "",
-    description: "",
-    productImg: null,
+const EditProduct = ({ onClose, product }) => {
+  const [imagePreview, setImagePreview] = useState(
+    product.productImg
+      ? `http://localhost:5000/uploads/products/${product.productImg}`
+      : null,
+  );
+
+  const [formData, setFormData] = useState({
+    name: product?.name || "",
+    price: product?.price || "",
+    stock: product?.stock || "",
+    category: product?.category || "",
+    description: product?.description || "",
+    productImg: product?.productImg || null,
   });
-  const [formData, setFormData] = useState(initialFormData);
+
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (product) {
+      setFormData({
+        name: product.name || "",
+        price: product.price || "",
+        stock: product.stock || "",
+        category: product.category || "",
+        description: product.description || "",
+        productImg: product.productImg || null,
+      });
+      setImagePreview(
+        product.productImg
+          ? `http://localhost:5000/uploads/products/${product.productImg}`
+          : null,
+      );
+    }
+  }, [product]);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -32,7 +56,10 @@ const AddProduct = ({ onClose }) => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const addProduct = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
     try {
       const dataToSend = new FormData();
       dataToSend.append("name", formData.name);
@@ -41,38 +68,36 @@ const AddProduct = ({ onClose }) => {
       dataToSend.append("category", formData.category);
       dataToSend.append("description", formData.description);
 
-      if (formData.productImg) {
+      if (formData.productImg instanceof File) {
         dataToSend.append("productImg", formData.productImg);
+      } else if (formData.productImg === null) {
+        dataToSend.append("productImg", "");
       }
 
-      const res = await fetch("http://localhost:5000/api/product/create", {
-        method: "POST",
-        body: dataToSend,
-      });
+      const productId = product._id || product.id;
+      const res = await fetch(
+        `http://localhost:5000/api/product/update/${productId}`,
+        {
+          method: "PUT",
+          body: dataToSend,
+        },
+      );
 
-      const result = await res.json();
-      if (res.ok) {
-        alert("Product added successfully!");
-        window.location.reload();
-
-        onClose();
-      } else {
-        alert("Failed to add product: " + result.message);
+      if (!res.ok) {
+        throw new Error("Failed to update product");
       }
+
+      const updatedProduct = await res.json();
+
+      alert("Product Updated Successfully");
+      onClose();
     } catch (error) {
-      console.error("Error adding product:", error);
+      console.error("Error updating product:", error);
+      alert("Failed to update product. Please try again.");
+    } finally {
+      setLoading(false);
     }
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    addProduct();
-
-    setFormData(initialFormData);
-    setImagePreview(null);
-    const fileInput = document.getElementById("image");
-    if (fileInput) fileInput.value = "";
+    window.location.reload();
   };
 
   return (
@@ -257,10 +282,9 @@ const AddProduct = ({ onClose }) => {
             <button
               type="button"
               className="cursor-pointer px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              disabled={loading}
               onClick={() => {
                 onClose();
-                setFormData(initialFormData);
-                handleRemoveImage();
               }}
             >
               Cancel
@@ -268,9 +292,10 @@ const AddProduct = ({ onClose }) => {
 
             <button
               type="submit"
+              disabled={loading}
               className="cursor-pointer px-5 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
-              Add Product
+              {loading ? "Saving Changes..." : "Save Changes"}
             </button>
           </div>
         </form>
@@ -279,4 +304,4 @@ const AddProduct = ({ onClose }) => {
   );
 };
 
-export default AddProduct;
+export default EditProduct;

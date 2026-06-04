@@ -14,7 +14,6 @@ const AdminProducts = () => {
     };
     fetchProducts();
   }, []);
-  console.log(products);
 
   return (
     <div className="p-6  w-[100%]">

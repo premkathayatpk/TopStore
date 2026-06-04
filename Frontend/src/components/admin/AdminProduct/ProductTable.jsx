@@ -4,10 +4,13 @@ import { MdDeleteForever } from "react-icons/md";
 import { useState } from "react";
 import ViewProduct from "./ViewProduct";
 import { deleteProduct } from "../../../api/productService";
+import EditProduct from "./EditProduct";
 
 const ProductTable = ({ products }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [product, setProduct] = useState(null);
+
   return (
     <div className="w-full bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
       <div className="overflow-x-auto">
@@ -107,7 +110,10 @@ const ProductTable = ({ products }) => {
                       <button
                         title="Edit Product"
                         className="p-2 text-indigo-600 hover:text-indigo-900 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition-all border border-transparent hover:border-indigo-200/50"
-                        onClick={() => {}}
+                        onClick={() => {
+                          setProduct(product);
+                          setIsModalOpen(true);
+                        }}
                       >
                         <FaEdit size={16} />
                       </button>
@@ -118,6 +124,7 @@ const ProductTable = ({ products }) => {
                         className="p-2 text-rose-600 hover:text-rose-900 bg-rose-50 hover:bg-rose-100 rounded-lg transition-all border border-transparent hover:border-rose-200/50"
                         onClick={() => {
                           deleteProduct(product._id);
+                          alert("Product Deleted successfully");
                           window.location.reload();
                         }}
                       >
@@ -155,6 +162,10 @@ const ProductTable = ({ products }) => {
           }}
           product={product}
         />
+      )}
+
+      {isModalOpen && (
+        <EditProduct onClose={() => setIsModalOpen(false)} product={product} />
       )}
     </div>
   );
