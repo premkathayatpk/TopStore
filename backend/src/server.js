@@ -27,6 +27,7 @@ connect();
 
 //API
 app.use("/uploads/avatars", express.static("public/uploads/avatars"));
+app.use("/uploads/products", express.static("public/uploads/products"));
 
 app.use("/api/product", productRouter);
 app.use("/api/user", userRouter);

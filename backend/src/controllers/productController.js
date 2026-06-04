@@ -16,7 +16,7 @@ export const createProduct = async (req, res) => {
       });
     }
 
-    const imagePath = `/uploads/products/${req.file.filename}`;
+    const ImageFileName = req.file.filename;
 
     const savedProduct = await Product.create({
       name,
@@ -24,7 +24,7 @@ export const createProduct = async (req, res) => {
       description,
       category,
       stock,
-      productImg: imagePath,
+      productImg: ImageFileName,
     });
 
     res.status(201).json({
