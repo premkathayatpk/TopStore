@@ -1,54 +1,136 @@
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useReducer,
-  useState,
-} from "react";
+import { createContext, useContext, useEffect, useState } from "react";
+import { AuthContext } from "./AuthProvider";
 
 const CartContext = createContext();
 
+const API = "http://localhost:5000/api/cart";
+
 export const CartProvider = ({ children }) => {
-  const [cart, setCart] = useState(() => {
-    const existingCart = localStorage.getItem("cart");
-    return existingCart ? JSON.parse(existingCart) : [];
-  });
+  const { user } = useContext(AuthContext);
+  const userId = user?._id;
+
+  const [cart, setCart] = useState([]);
+
+  //Get cart
+  const getCart = async (userId) => {
+    if (!userId) return;
+
+    try {
+      const res = await fetch(`${API}/get/${userId}`, {
+        method: "GET",
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        setCart(data.cart);
+      }
+    } catch (error) {
+      console.error("Error to featch cart ", error);
+    }
+  };
 
   useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(cart));
-  }, [cart]);
+    if (userId) {
+      getCart(userId);
+    }
+  }, [userId]);
 
-  const addToCart = (product) => {
-    setCart((prev) => {
-      const isExisting = prev.find((item) => item.id === product.id);
+  //Add to cart
+  const addToCart = async (productId) => {
+    if (!userId) return;
 
-      if (isExisting) {
-        alert("Product Already added in cart");
-        return prev;
+    try {
+      const res = await fetch(`${API}/add`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId, productId }),
+      });
+      const data = await res.json();
+
+      if (res.ok) {
+        alert("Product added to cart Successfylly");
+        setCart(data.cart);
+      } else {
+        console.error(data.message);
       }
-      alert("Product Added to cart Successfully.");
-      return [...prev, { ...product, quantity: 1 }];
-    });
+    } catch (error) {
+      console.error("Error to featch cart ", error);
+    }
   };
 
-  const removeFromCart = (pid) => {
-    setCart((prev) => prev.filter((item) => item.id !== pid));
+  //remove item
+  const removeItem = async (productId) => {
+    if (!userId) return;
+
+    try {
+      const res = await fetch(`${API}/remove`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ productId }),
+      });
+      const data = await res.json();
+
+      if (res.ok) {
+        setCart(data.cart);
+      } else {
+        console.error(data.message);
+      }
+    } catch (error) {
+      console.error("Error to featch cart ", error);
+    }
   };
 
-  const updateQty = (pid, type) => {
-    setCart((prev) =>
-      prev.map((item) => {
-        if (item.id === pid) {
-          let newQty = type === "inc" ? item.quantity + 1 : item.quantity - 1;
-          return { ...item, quantity: newQty < 1 ? 1 : newQty };
-        }
-        return item;
-      }),
-    );
+  //update qty
+  const updateQty = async (productId, quantity) => {
+    if (!userId) return;
+
+    try {
+      const res = await fetch(`${API}/update`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ productId, quantity }),
+      });
+      const data = await res.json();
+
+      if (res.ok) {
+        setCart(data.cart);
+      } else {
+        console.error(data.message);
+      }
+    } catch (error) {
+      console.error("Error to featch cart ", error);
+    }
   };
+
+  //clear cart
+  const clearCart = async () => {
+    if (!userId) return;
+
+    try {
+      const res = await fetch(`${API}/clear/${userId}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+
+      if (res.ok) {
+        setCart(data.cart);
+      } else {
+        console.error(data.message);
+      }
+    } catch (error) {
+      console.error("Error to clear cart ", error);
+    }
+  };
+
   return (
     <CartContext.Provider
-      value={{ cart, setCart, addToCart, removeFromCart, updateQty }}
+      value={{ cart, getCart, addToCart, removeItem, updateQty, clearCart }}
     >
       {children}
     </CartContext.Provider>

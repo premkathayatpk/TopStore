@@ -51,7 +51,9 @@ const Navbar = () => {
           <NavLink to="cart" className={linkClass}>
             <MdOutlineShoppingCart size={25} />
             <sup className="text-white bg-orange-500  rounded-full py-2 px-1 ">
-              {cart.length}
+              {cart.items?.reduce((acc, item) => {
+                return acc + (item.quantity || 0);
+              }, 0) || 0}
             </sup>
           </NavLink>
         )}
