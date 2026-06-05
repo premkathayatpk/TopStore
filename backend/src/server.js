@@ -5,6 +5,7 @@ import connect from "./config/db.js";
 import { productRouter } from "./routers/productRouter.js";
 import userRouter from "./routers/userRouter.js";
 import cookieParser from "cookie-parser";
+import cartRouter from "./routers/cartRouter.js";
 
 const dotenv = configDotenv();
 
@@ -31,6 +32,7 @@ app.use("/uploads/products", express.static("public/uploads/products"));
 
 app.use("/api/product", productRouter);
 app.use("/api/user", userRouter);
+app.use("/api/cart", cartRouter);
 
 const PORT = process.env.PORT || 5000;
 
