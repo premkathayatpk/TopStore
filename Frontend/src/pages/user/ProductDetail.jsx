@@ -8,7 +8,7 @@ import { FaMinus, FaPlus } from "react-icons/fa";
 const ProductDetail = () => {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
-  const { addToCart } = useCart();
+  const { addToCart, updateQty } = useCart();
   const { id } = useParams();
   const [product, setProduct] = useState("");
   // console.log(id);
@@ -83,7 +83,7 @@ const ProductDetail = () => {
             </span>
           </p>
 
-          <div className="flex h-10 w-36 items-center justify-between rounded-xl border border-gray-300 bg-gray-50 p-1 shadow-sm  focus-within:ring-2 focus-within:ring-blue-500">
+          {/* <div className="flex h-10 w-36 items-center justify-between rounded-xl border border-gray-300 bg-gray-50 p-1 shadow-sm  focus-within:ring-2 focus-within:ring-blue-500">
             <button
               type="button"
               onClick={() => {
@@ -108,7 +108,7 @@ const ProductDetail = () => {
             >
               <FaPlus />
             </button>
-          </div>
+          </div> */}
 
           <div className="flex flex-col sm:flex-row gap-4 pt-4">
             <button

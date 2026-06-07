@@ -8,8 +8,8 @@ const API = "http://localhost:5000/api/cart";
 export const CartProvider = ({ children }) => {
   const { user } = useContext(AuthContext);
   const userId = user?._id;
-
   const [cart, setCart] = useState([]);
+  // const [qty, setQty] = useState("");
 
   //Get cart
   const getCart = async (userId) => {
@@ -52,6 +52,7 @@ export const CartProvider = ({ children }) => {
       if (res.ok) {
         alert("Product added to cart Successfylly");
         setCart(data.cart);
+        getCart(userId);
       } else {
         console.error(data.message);
       }
@@ -70,12 +71,14 @@ export const CartProvider = ({ children }) => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ productId }),
+        body: JSON.stringify({ userId, productId }),
       });
       const data = await res.json();
 
       if (res.ok) {
+        alert("Item Remove Successfully");
         setCart(data.cart);
+        getCart(userId);
       } else {
         console.error(data.message);
       }
@@ -94,12 +97,13 @@ export const CartProvider = ({ children }) => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ productId, quantity }),
+        body: JSON.stringify({ userId, productId, quantity }),
       });
       const data = await res.json();
 
       if (res.ok) {
         setCart(data.cart);
+        getCart(userId);
       } else {
         console.error(data.message);
       }
