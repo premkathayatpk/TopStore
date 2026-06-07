@@ -27,6 +27,8 @@ import AdminDashboard from "../pages/admin/AdminDashboard";
 import AdminOrders from "../pages/admin/AdminOrders";
 import AdminUsers from "../pages/admin/AdminUsers";
 import AdminProducts from "../pages/admin/AdminProducts";
+import PaymentFail from "../pages/user/PaymentFail";
+import PaymentSucc from "../pages/user/PaymentSucc";
 
 const AppRoute = () => {
   const router = createBrowserRouter([
@@ -82,6 +84,14 @@ const AppRoute = () => {
             {
               path: "payment",
               element: <Payment />,
+            },
+            {
+              path: "payment-success",
+              element: <PaymentSucc />,
+            },
+            {
+              path: "payment-failure",
+              element: <PaymentFail />,
             },
             {
               path: "cart",

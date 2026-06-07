@@ -1,18 +1,68 @@
 import CryptoJS from "crypto-js";
-import React, { useMemo } from "react";
+import React, { useContext, useMemo, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
+import { AuthContext } from "../../context/AuthProvider";
 
 const Payment = () => {
   const { state } = useLocation();
+  const formRef = useRef(null);
+  const { user } = useContext(AuthContext);
+
+  const items = state?.items || [];
+  const totalAmount = state?.grandTotal || 0;
+  const subtotal = state?.subtotal || 0;
+  const shipping = state?.shipping || 0;
+
+  const userId = user?._id;
+
   const transaction_uuid = useMemo(() => uuidv4(), []);
   const product_code = "EPAYTEST";
   const secret_key = "8gBm/:&EnhH.1/q";
 
-  const message = `total_amount=${state},transaction_uuid=${transaction_uuid},product_code=${product_code}`;
+  const message = `total_amount=${totalAmount},transaction_uuid=${transaction_uuid},product_code=${product_code}`;
 
   const hash = CryptoJS.HmacSHA256(message, secret_key);
   const signature = CryptoJS.enc.Base64.stringify(hash);
+
+  const handleCheckoutSubmit = async (e) => {
+    e.preventDefault();
+
+    const orderPayload = {
+      userId,
+      items: items.map((item) => ({
+        productId: item.productId?._id,
+        quantity: item.quantity,
+      })),
+      subtotal,
+      shipping,
+      total: totalAmount,
+      transaction_uuid,
+    };
+
+    try {
+      const res = await fetch("http://localhost:5000/api/order/create", {
+        method: "POST",
+
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(orderPayload),
+      });
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        if (formRef.current) {
+          formRef.current.submit();
+        }
+      } else {
+        alert(data.message || "Could not register order with the database.");
+      }
+    } catch (error) {
+      console.error("Order sync failure context:", error);
+      alert(
+        "Network communication error. Failed to initialize order checkout.",
+      );
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4 font-sans">
@@ -33,7 +83,7 @@ const Payment = () => {
                 Total Amount to Pay
               </span>
               <span className="text-[#60bb46] text-4xl font-extrabold">
-                Rs. {state}
+                Rs. {totalAmount}
               </span>
             </div>
           </div>
@@ -54,14 +104,16 @@ const Payment = () => {
           </div>
 
           <form
+            ref={formRef}
             action="https://rc-epay.esewa.com.np/api/epay/main/v2/form"
             method="POST"
+            onSubmit={handleCheckoutSubmit}
           >
             <input
               type="hidden"
               id="amount"
               name="amount"
-              value={state}
+              value={totalAmount}
               required
             />
             <input
@@ -75,7 +127,7 @@ const Payment = () => {
               type="hidden"
               id="total_amount"
               name="total_amount"
-              value={state}
+              value={totalAmount}
               required
             />
             <input
@@ -110,14 +162,14 @@ const Payment = () => {
               type="hidden"
               id="success_url"
               name="success_url"
-              value="https://developer.esewa.com.np/success"
+              value={`${window.location.origin}/payment-success`}
               required
             />
             <input
               type="hidden"
               id="failure_url"
               name="failure_url"
-              value="https://developer.esewa.com.np/failure"
+              value={`${window.location.origin}/payment-failure`}
               required
             />
             <input

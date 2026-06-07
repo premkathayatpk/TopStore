@@ -80,6 +80,7 @@ export const getCart = async (req, res) => {
   }
 };
 
+//updateqty
 export const updateQuantity = async (req, res) => {
   try {
     const { userId, productId, quantity } = req.body;

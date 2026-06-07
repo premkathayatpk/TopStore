@@ -199,7 +199,14 @@ const Cart = () => {
                 <button
                   className="w-full bg-orange-600 text-white py-3.5 px-4 rounded-xl text-lg font-bold shadow-md shadow-orange-600/10 hover:bg-orange-500 hover:shadow-lg transition-all transform active:scale-[0.99] mt-4 flex items-center justify-center gap-2 cursor-pointer"
                   onClick={() => {
-                    navigate("/payment", { state: grandTotal });
+                    navigate("/payment", {
+                      state: {
+                        items,
+                        subtotal,
+                        shipping,
+                        grandTotal,
+                      },
+                    });
                   }}
                 >
                   <span>Proceed to Checkout</span>
