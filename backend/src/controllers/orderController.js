@@ -41,3 +41,44 @@ export const createOrder = async (req, res) => {
     });
   }
 };
+
+export const verifyPayment = async (req, res) => {
+  const { transaction_uuid, total_amount, status } = req.body;
+  try {
+    if (status !== "COMPLETE") {
+      return res.status(400).json({
+        success: false,
+        message: "Transaction was not completed successfully.",
+      });
+    }
+
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message:
+          "Order records matching this transaction ID could not be found.",
+      });
+    }
+
+    if (Number(order.total) !== Number(total_amount)) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Transaction price mismatch error. Order manipulation detected.",
+      });
+    }
+
+    Orderrder.paymentStatus = "Paid";
+    await Order.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Order payment validated and captured successfully.",
+    });
+  } catch (error) {
+    console.error("eSewa verification route crash:", error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal Server Processing Error." });
+  }
+};
