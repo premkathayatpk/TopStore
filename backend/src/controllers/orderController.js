@@ -18,7 +18,7 @@ export const createOrder = async (req, res) => {
       items: items,
       subtotal: subtotal,
       shippingCharge: shipping,
-      totalAmount: total,
+      totalAmount: total, // Note: saved as totalAmount
       transaction_uuid: transaction_uuid,
       paymentStatus: "pending",
       orderStatus: "processing",
@@ -42,16 +42,12 @@ export const createOrder = async (req, res) => {
   }
 };
 
+// payment verify
 export const verifyPayment = async (req, res) => {
   const { transaction_uuid, total_amount, status } = req.body;
-  try {
-    if (status !== "COMPLETE") {
-      return res.status(400).json({
-        success: false,
-        message: "Transaction was not completed successfully.",
-      });
-    }
 
+  try {
+    const order = await Order.findOne({ transaction_uuid: transaction_uuid });
     if (!order) {
       return res.status(404).json({
         success: false,
@@ -60,7 +56,21 @@ export const verifyPayment = async (req, res) => {
       });
     }
 
-    if (Number(order.total) !== Number(total_amount)) {
+    if (status !== "COMPLETE") {
+      order.paymentStatus = "failed"; 
+      await order.save();
+
+      return res.status(200).json({
+        success: false,
+        status: "failed",
+        message: `Transaction was not completed. eSewa status: ${status}`,
+      });
+    }
+
+    if (Number(order.totalAmount) !== Number(total_amount)) {
+      order.paymentStatus = "failed";
+      await order.save();
+
       return res.status(400).json({
         success: false,
         message:
@@ -68,17 +78,19 @@ export const verifyPayment = async (req, res) => {
       });
     }
 
-    Orderrder.paymentStatus = "Paid";
-    await Order.save();
+    order.paymentStatus = "completed";
+    await order.save();
 
     return res.status(200).json({
       success: true,
+      status: "completed",
       message: "Order payment validated and captured successfully.",
     });
   } catch (error) {
     console.error("eSewa verification route crash:", error);
-    return res
-      .status(500)
-      .json({ success: false, message: "Internal Server Processing Error." });
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Processing Error.",
+    });
   }
 };
