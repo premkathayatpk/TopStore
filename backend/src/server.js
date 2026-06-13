@@ -2,11 +2,12 @@ import express from "express";
 import cors from "cors";
 import { configDotenv } from "dotenv";
 import connect from "./config/db.js";
+import cookieParser from "cookie-parser";
 import { productRouter } from "./routers/productRouter.js";
 import userRouter from "./routers/userRouter.js";
-import cookieParser from "cookie-parser";
 import cartRouter from "./routers/cartRouter.js";
 import OrderRouter from "./routers/orderRouter.js";
+import { MessageRouter } from "./routers/messageRouter.js";
 
 const dotenv = configDotenv();
 
@@ -35,6 +36,7 @@ app.use("/api/product", productRouter);
 app.use("/api/user", userRouter);
 app.use("/api/cart", cartRouter);
 app.use("/api/order", OrderRouter);
+app.use("/api/message", MessageRouter);
 
 const PORT = process.env.PORT || 5000;
 

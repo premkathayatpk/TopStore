@@ -9,7 +9,6 @@ export const CartProvider = ({ children }) => {
   const { user } = useContext(AuthContext);
   const userId = user?._id;
   const [cart, setCart] = useState([]);
-  // const [qty, setQty] = useState("");
 
   //Get cart
   const getCart = async (userId) => {
@@ -30,7 +29,7 @@ export const CartProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    if (userId) {
+    if (userId && cart.length !== 0) {
       getCart(userId);
     }
   }, [userId]);

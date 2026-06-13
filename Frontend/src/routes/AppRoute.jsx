@@ -29,6 +29,8 @@ import AdminUsers from "../pages/admin/AdminUsers";
 import AdminProducts from "../pages/admin/AdminProducts";
 import PaymentFail from "../pages/user/PaymentFail";
 import PaymentSucc from "../pages/user/PaymentSucc";
+import PageNotFound from "../pages/user/PageNotFound";
+import Message from "../pages/admin/Message";
 
 const AppRoute = () => {
   const router = createBrowserRouter([
@@ -134,6 +136,10 @@ const AppRoute = () => {
               path: "profile",
               element: <Profile />,
             },
+            {
+              path: "message",
+              element: <Message />,
+            },
           ],
         },
       ],
@@ -141,7 +147,7 @@ const AppRoute = () => {
 
     // 404 page
 
-    { path: "*", element: <h1>Page Not Found</h1> },
+    { path: "*", element: <PageNotFound /> },
   ]);
   return <RouterProvider router={router} />;
 };

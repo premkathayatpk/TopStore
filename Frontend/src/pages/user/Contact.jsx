@@ -19,10 +19,26 @@ const Contact = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    console.log(formData);
-    alert(
-      "Thanks for reaching out! Our team will get back to you within 24 hours.",
-    );
+    const sendMessage = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/api/message/send", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData),
+        });
+        const data = await res.json();
+        if (res.ok) {
+          alert("Thanks for reaching out! Our team will get back to you.");
+        } else {
+          console.error("Failed to send message: ", data.message);
+          alert("Failed to send message. Please try again.");
+        }
+      } catch (error) {
+        console.error("Error sending message", error);
+        alert("Failed to send message. Please try again.");
+      }
+    };
+    sendMessage();
     setFormData(initialState);
   };
   return (

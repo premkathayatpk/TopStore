@@ -128,7 +128,9 @@ export const getOrder = async (req, res) => {
 
 export const getAllOrders = async (req, res) => {
   try {
-    const orders = await Order.find().populate("items.productId");
+    const orders = await Order.find()
+      .populate("items.productId")
+      .populate("user", "name email");
 
     if (!orders || orders.length === 0) {
       return res.status(404).json({
@@ -143,6 +145,71 @@ export const getAllOrders = async (req, res) => {
     });
   } catch (error) {
     console.error("Error fetching orders", error);
+    return res
+      .status(500)
+      .json({ status: "error", message: "Server error", error: error.message });
+  }
+};
+
+// update order status by order id
+export const updateOrderStatus = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const { orderStatus, paymentStatus } = req.body;
+
+    if (!orderId || (!orderStatus && !paymentStatus)) {
+      return res.status(400).json({
+        status: "fail",
+        message: "Order ID and new status are required.",
+      });
+    }
+
+    const updatedOrder = await Order.findByIdAndUpdate(orderId, req.body, {
+      new: true,
+      runValidators: true,
+    })
+      .populate("items.productId")
+      .populate("user", "name email");
+
+    if (!updatedOrder) {
+      return res.status(404).json({
+        status: "fail",
+        message: "Order not found with the provided ID.",
+      });
+    }
+
+    return res.status(200).json({
+      status: "success",
+      message: "Order updated successfully.",
+      data: updatedOrder,
+    });
+  } catch (error) {
+    console.error("Error updating order status:", error);
+    return res
+      .status(500)
+      .json({ status: "error", message: "Server error", error: error.message });
+  }
+};
+
+// delete order by id
+export const deleteOrder = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+
+    const deletedOrder = await Order.findByIdAndDelete(orderId);
+
+    if (!deletedOrder) {
+      return res.status(404).json({
+        status: "fail",
+        message: "Order not found with the provided ID.",
+      });
+    }
+    return res.status(200).json({
+      status: "success",
+      message: "Order deleted successfully.",
+    });
+  } catch (error) {
+    console.error("Error deleting order:", error);
     return res
       .status(500)
       .json({ status: "error", message: "Server error", error: error.message });
