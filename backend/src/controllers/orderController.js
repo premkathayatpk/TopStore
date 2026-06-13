@@ -57,7 +57,7 @@ export const verifyPayment = async (req, res) => {
     }
 
     if (status !== "COMPLETE") {
-      order.paymentStatus = "failed"; 
+      order.paymentStatus = "failed";
       await order.save();
 
       return res.status(200).json({
@@ -92,5 +92,59 @@ export const verifyPayment = async (req, res) => {
       success: false,
       message: "Internal Server Processing Error.",
     });
+  }
+};
+
+// get orders by user id
+
+export const getOrder = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const orders = await Order.find({ user: userId }).populate(
+      "items.productId",
+    );
+
+    if (!orders || orders.length === 0) {
+      return res.status(404).json({
+        status: "fail",
+        message: "No orders found for this user",
+      });
+    }
+
+    return res.status(200).json({
+      status: "success",
+      data: orders,
+    });
+  } catch (error) {
+    console.error("Error fetching orders", error);
+    return res
+      .status(500)
+      .json({ status: "error", message: "Server error", error: error.message });
+  }
+};
+
+// get All orders
+
+export const getAllOrders = async (req, res) => {
+  try {
+    const orders = await Order.find().populate("items.productId");
+
+    if (!orders || orders.length === 0) {
+      return res.status(404).json({
+        status: "fail",
+        message: "No orders found",
+      });
+    }
+
+    return res.status(200).json({
+      status: "success",
+      data: orders,
+    });
+  } catch (error) {
+    console.error("Error fetching orders", error);
+    return res
+      .status(500)
+      .json({ status: "error", message: "Server error", error: error.message });
   }
 };
