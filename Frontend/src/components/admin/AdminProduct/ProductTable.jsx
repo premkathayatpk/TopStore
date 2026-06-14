@@ -63,7 +63,7 @@ const ProductTable = ({ products }) => {
 
                   {/* Price */}
                   <td className="py-4 px-6 whitespace-nowrap text-gray-900 font-semibold text-sm">
-                    ${Number(product.price).toFixed(2)}
+                    Rs.{Number(product.price).toFixed(2)}
                   </td>
 
                   {/* Stock Status Pill */}

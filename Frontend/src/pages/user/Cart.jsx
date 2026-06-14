@@ -53,7 +53,7 @@ const Cart = () => {
             {/* Cart Items  */}
             {items.length > 0 ? (
               <div className="bg-white rounded-2xl shadow-sm border border-gray-100 divide-y divide-gray-100 overflow-hidden">
-                {items.map((item) => (
+                {items?.map((item) => (
                   <div
                     key={item._id}
                     className="p-6 flex flex-col md:flex-row items-center justify-between gap-6 transition-all hover:bg-gray-50/50"

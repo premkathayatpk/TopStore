@@ -100,10 +100,6 @@ const AdminOrders = () => {
         <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl">
           Orders Management
         </h1>
-        <p className="text-sm text-gray-500 mt-1">
-          Manage system-wide fulfillment metrics, status pipelines, and
-          transaction logs.
-        </p>
       </div>
 
       <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
@@ -192,7 +188,7 @@ const AdminOrders = () => {
                   </td>
 
                   <td className="px-6 py-4 text-sm font-bold text-gray-900 align-middle">
-                    ${order.totalAmount?.toLocaleString()}
+                    Rs.{order.totalAmount?.toLocaleString()}
                   </td>
 
                   {/* Order Status Select Column */}

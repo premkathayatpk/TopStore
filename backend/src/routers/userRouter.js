@@ -19,10 +19,11 @@ userRouter.post("/logout", logoutUser);
 
 userRouter.get("/getMe", protect, getUser);
 
-userRouter.get("/getAllUsers", getAllUsers);
-userRouter.delete("/deleteUser/:id", deleteUser);
+userRouter.get("/getAllUsers", protect, getAllUsers);
+userRouter.delete("/deleteUser/:id", protect, deleteUser);
 userRouter.put(
   "/updateUser/:id",
+  protect,
   uploadAvatar.single("profileImg"),
   updateUser,
 );

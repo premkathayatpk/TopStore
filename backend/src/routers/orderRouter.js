@@ -7,14 +7,15 @@ import {
   updateOrderStatus,
   verifyPayment,
 } from "../controllers/orderController.js";
+import protect from "../middlewares/authMiddleware.js";
 
 const OrderRouter = express.Router();
 
-OrderRouter.post("/create", createOrder);
-OrderRouter.post("/verifyPayment", verifyPayment);
-OrderRouter.get("/getOrder/:userId", getOrder);
-OrderRouter.get("/getAllOrders", getAllOrders);
-OrderRouter.put("/updateStatus/:orderId", updateOrderStatus);
-OrderRouter.delete("/deleteOrder/:orderId", deleteOrder);
+OrderRouter.post("/create", protect, createOrder);
+OrderRouter.post("/verifyPayment", protect, verifyPayment);
+OrderRouter.get("/getOrder/:userId", protect, getOrder);
+OrderRouter.get("/getAllOrders", protect, getAllOrders);
+OrderRouter.put("/updateStatus/:orderId", protect, updateOrderStatus); 
+OrderRouter.delete("/deleteOrder/:orderId", protect, deleteOrder);
 
 export default OrderRouter;

@@ -29,7 +29,7 @@ export const CartProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    if (userId && cart.length !== 0) {
+    if (userId) {
       getCart(userId);
     }
   }, [userId]);
